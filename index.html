@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mental Health Helper</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background: linear-gradient(135deg, #e8effa, #d9f0ff);
+    }
+    h1 {
+      color: #333;
+      text-align: center;
+    }
+    .container {
+      text-align: center;
+      width: 80%;
+      max-width: 600px;
+    }
+    .options {
+      margin-top: 20px;
+    }
+    .option-btn {
+      display: block;
+      width: 100%;
+      max-width: 300px;
+      margin: 10px auto;
+      padding: 15px;
+      background-color: #007BFF;
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .option-btn:hover {
+      background-color: #0056b3;
+    }
+    .option-btn:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+    .output {
+      margin-top: 30px;
+      padding: 20px;
+      border-radius: 8px;
+      background-color: #ffffff;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .output h3 {
+      color: #007BFF;
+      margin-bottom: 10px;
+    }
+    .output p {
+      color: #333;
+      margin: 5px 0;
+    }
+    .doctor-info {
+      margin-top: 15px;
+      color: #007BFF;
+      font-weight: bold;
+    }
+    .reset-btn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #28a745;
+      color: white;
+      font-size: 14px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .reset-btn:hover {
+      background-color: #218838;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Hey, tell me how you're feeling lately?</h1>
+    <p>Select one option below to get suggestions:</p>
+    <div class="options">
+      <button class="option-btn" onclick="checkCondition('Depression')">Depression</button>
+      <button class="option-btn" onclick="checkCondition('Loneliness')">Loneliness</button>
+      <button class="option-btn" onclick="checkCondition('Trauma')">Trauma</button>
+      <button class="option-btn" onclick="checkCondition('Anxiety')">Anxiety</button>
+      <button class="option-btn" onclick="checkCondition('ADHD')">ADHD</button>
+      <button class="option-btn" onclick="checkCondition('Stress')">Stress</button>
+    </div>
+    <div id="output" class="output" style="display: none;"></div>
+    <button id="reset-btn" class="reset-btn" style="display: none;" onclick="resetOptions()">Reset</button>
+  </div>
+  <script>
+    function checkCondition(issue) {
+      const buttons = document.querySelectorAll('.option-btn');
+      const output = document.getElementById('output');
+      const resetBtn = document.getElementById('reset-btn');
+
+      // Disable all buttons
+      buttons.forEach(button => button.disabled = true);
+
+      let suggestions = "";
+      let doctorInfo = "Nearest Doctor: Dr. Smith, Location: Wellness Clinic, City Center. Contact: 123-456-7890";
+
+      switch (issue) {
+        case 'Depression':
+          suggestions = `
+            <h3>Steps to Overcome Depression:</h3>
+            <p>- Practice mindfulness and meditation.</p>
+            <p>- Exercise regularly to boost endorphins.</p>
+            <p>- Talk to friends or a therapist.</p>
+            <p>- Medicines: Consult for SSRIs like Sertraline.</p>`;
+          break;
+        case 'Loneliness':
+          suggestions = `
+            <h3>Steps to Overcome Loneliness:</h3>
+            <p>- Join social groups or activities.</p>
+            <p>- Volunteer for community services.</p>
+            <p>- Stay connected with loved ones via calls or video chats.</p>`;
+          break;
+        case 'Trauma':
+          suggestions = `
+            <h3>Steps to Overcome Trauma:</h3>
+            <p>- Seek therapy (CBT or EMDR is effective).</p>
+            <p>- Practice grounding techniques to stay in the present.</p>
+            <p>- Journaling can help process emotions.</p>`;
+          break;
+        case 'Anxiety':
+          suggestions = `
+            <h3>Steps to Overcome Anxiety:</h3>
+            <p>- Practice deep breathing exercises.</p>
+            <p>- Limit caffeine and sugar intake.</p>
+            <p>- Meditate daily to calm your mind.</p>
+            <p>- Medicines: Consult for benzodiazepines or SSRIs.</p>`;
+          break;
+        case 'ADHD':
+          suggestions = `
+            <h3>Steps to Manage ADHD:</h3>
+            <p>- Follow a structured routine daily.</p>
+            <p>- Use planners or apps to manage tasks.</p>
+            <p>- Try behavior therapy for improved focus.</p>
+            <p>- Medicines: Consult for stimulants like Adderall or Ritalin.</p>`;
+          break;
+        case 'Stress':
+          suggestions = `
+            <h3>Steps to Manage Stress:</h3>
+            <p>- Identify stressors and address them one by one.</p>
+            <p>- Engage in relaxing hobbies like reading or gardening.</p>
+            <p>- Practice yoga or mindfulness meditation.</p>`;
+          break;
+        default:
+          suggestions = `<p>Invalid selection. Please try again.</p>`;
+      }
+
+      output.innerHTML = suggestions + `<div class="doctor-info">${doctorInfo}</div>`;
+      output.style.display = 'block';
+      resetBtn.style.display = 'inline-block';
+    }
+
+    function resetOptions() {
+      const buttons = document.querySelectorAll('.option-btn');
+      const output = document.getElementById('output');
+      const resetBtn = document.getElementById('reset-btn');
+
+      // Enable all buttons
+      buttons.forEach(button => button.disabled = false);
+
+      // Clear output and hide reset button
+      output.style.display = 'none';
+      output.innerHTML = '';
+      resetBtn.style.display = 'none';
+    }
+  </script>
+</body>
+</html>

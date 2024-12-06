@@ -55,6 +55,7 @@
       border-radius: 8px;
       background-color: #ffffff;
       box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+      text-align: left;
     }
     .output h3 {
       color: #007BFF;
@@ -63,6 +64,7 @@
     .output p {
       color: #333;
       margin: 5px 0;
+      line-height: 1.6;
     }
     .doctor-info {
       margin-top: 15px;
@@ -101,68 +103,124 @@
     <button id="reset-btn" class="reset-btn" style="display: none;" onclick="resetOptions()">Reset</button>
   </div>
   <script>
-    function checkCondition(issue) {
+    const conditions = {
+      Depression: {
+        title: "Symptoms and Management of Depression",
+        description: `
+          <h3>Symptoms:</h3>
+          <p>Persistent sadness or feeling "empty" most of the day.</p>
+          <p>Loss of interest in activities once enjoyed, including hobbies or socializing.</p>
+          <p>Fatigue or lack of energy, even after rest.</p>
+          <p>Difficulty concentrating or making decisions.</p>
+          <p>Changes in appetite or weight (either significant weight loss or gain).</p>
+          <p>Sleep disturbances (insomnia or sleeping too much).</p>
+          <p>Feelings of worthlessness or excessive guilt.</p>
+          <p>Irritability or frustration, even over small matters.</p>
+          <p>Physical symptoms such as headaches, aches, or digestive issues without a clear medical cause.</p>
+          <p>Thoughts of death or suicide, or a desire to escape life.</p>
+          <h3>Management:</h3>
+          <p>Acknowledge what’s happening.</p>
+          <p>Take care of yourself: eat well, exercise, and rest.</p>
+          <p>Take time for yourself. You are doing the best you can.</p>
+          <p>Notice how each part of an activity gives you satisfaction, hope, joy, or stress reduction.</p>
+          <p>Reach out to people you want to connect with, like your friends, family, neighbors, and co-workers.</p>
+          <p>Make an appointment with a counselor.</p>
+        `
+      },
+      Loneliness: {
+        title: "Symptoms and Management of Loneliness",
+        description: `
+          <h3>Symptoms:</h3>
+          <p>Spending a lot of time alone.</p>
+          <p>Feeling unproductive or stuck on negatives.</p>
+          <p>Frequently feeling sick or unwell.</p>
+          <p>Overly attached to possessions or hobbies.</p>
+          <h3>Management:</h3>
+          <p>Connect with people: Regular contact with friends and family can help you feel supported.</p>
+          <p>Start new hobbies: Do activities you enjoy, like reading, music, or evening classes.</p>
+          <p>Practice self-kindness and spend time alone to build confidence.</p>
+        `
+      },
+      Trauma: {
+        title: "Symptoms and Management of Trauma",
+        description: `
+          <h3>Symptoms:</h3>
+          <p>Shock, denial, or disbelief.</p>
+          <p>Confusion, difficulty concentrating.</p>
+          <p>Anger, irritability, mood swings.</p>
+          <p>Anxiety and fear.</p>
+          <p>Guilt, shame, self-blame.</p>
+          <p>Withdrawing from others.</p>
+          <p>Feeling sad or hopeless.</p>
+          <p>Feeling disconnected or numb.</p>
+          <h3>Management:</h3>
+          <p>Give yourself time: Recovery can take time, and you shouldn't pressure yourself to feel better right away.</p>
+          <p>Talk about it: Sharing feelings with friends, family, or mental health professionals can help.</p>
+          <p>Practice self-care: Eat well, sleep, exercise, and try stress-relieving activities like art or music.</p>
+          <p>Maintain routines: Routines for meals, sleep, and exercise help stabilize your daily life.</p>
+          <p>Seek psychotherapy like EMDR for structured healing.</p>
+        `
+      },
+      Anxiety: {
+        title: "Symptoms and Management of Anxiety",
+        description: `
+          <h3>Symptoms:</h3>
+          <p>Trouble concentrating or making decisions.</p>
+          <p>Persistent worry or fear.</p>
+          <p>Restlessness or feeling on edge.</p>
+          <p>Physical symptoms like sweating, trembling, or rapid heartbeat.</p>
+          <p>Difficulty sleeping or relaxing.</p>
+          <h3>Management:</h3>
+          <p>Practice relaxation techniques: Breathing exercises, meditation, or yoga.</p>
+          <p>Engage in physical activities: Walking, swimming, or running.</p>
+          <p>Eat healthy meals and maintain a sleep routine.</p>
+          <p>Reach out to a trusted friend or counselor to share your feelings.</p>
+          <p>Spend time in nature to help reduce stress.</p>
+        `
+      },
+      ADHD: {
+        title: "Symptoms and Management of ADHD",
+        description: `
+          <h3>Symptoms:</h3>
+          <p>Difficulty staying focused or completing tasks.</p>
+          <p>Frequent fidgeting or restlessness.</p>
+          <p>Impulsive actions without considering consequences.</p>
+          <p>Interrupting others or struggling to wait turns.</p>
+          <h3>Management:</h3>
+          <p>Create a structured daily schedule to prioritize tasks.</p>
+          <p>Engage in regular physical activity to improve focus.</p>
+          <p>Develop a consistent sleep routine to avoid fatigue.</p>
+          <p>Use techniques like mindfulness or relaxation exercises.</p>
+        `
+      },
+      Stress: {
+        title: "Symptoms and Management of Stress",
+        description: `
+          <h3>Symptoms:</h3>
+          <p>Physical aches, fatigue, or trouble sleeping.</p>
+          <p>Feelings of being overwhelmed or irritable.</p>
+          <p>Difficulty concentrating or managing tasks.</p>
+          <h3>Management:</h3>
+          <p>Exercise</p>
+          <p>Organizing your tasks, setting realistic goals, and breaking large tasks into smaller, manageable steps can reduce the feeling of being overwhelmed.<p>
+          <h3>Stay Connected</h3>
+          <p>Talking to friends, family, or a therapist can provide emotional support 
+            and help you feel less isolated during stressful times.</p>
+            <h3>Adequate Sleep</h3>
+            <p>Lack of sleep can exacerbate stress. Prioritize a regular sleep 
+              schedule and create a calming bedtime routine to ensure restful sleep.</p>
+              <h3>Healthy Diet</h3><p>Eating nutritious foods can positively impact mood 
+                and energy levels, helping to cope with stress more effectively.</p>`
+          }}
+
+    function checkCondition(condition) {
       const buttons = document.querySelectorAll('.option-btn');
       const output = document.getElementById('output');
       const resetBtn = document.getElementById('reset-btn');
 
-      // Disable all buttons
       buttons.forEach(button => button.disabled = true);
-
-      let suggestions = "";
-      let doctorInfo = "Nearest Doctor: Dr. Smith, Location: Wellness Clinic, City Center. Contact: 123-456-7890";
-
-      switch (issue) {
-        case 'Depression':
-          suggestions = `
-            <h3>Steps to Overcome Depression:</h3>
-            <p>- Practice mindfulness and meditation.</p>
-            <p>- Exercise regularly to boost endorphins.</p>
-            <p>- Talk to friends or a therapist.</p>
-            <p>- Medicines: Consult for SSRIs like Sertraline.</p>`;
-          break;
-        case 'Loneliness':
-          suggestions = `
-            <h3>Steps to Overcome Loneliness:</h3>
-            <p>- Join social groups or activities.</p>
-            <p>- Volunteer for community services.</p>
-            <p>- Stay connected with loved ones via calls or video chats.</p>`;
-          break;
-        case 'Trauma':
-          suggestions = `
-            <h3>Steps to Overcome Trauma:</h3>
-            <p>- Seek therapy (CBT or EMDR is effective).</p>
-            <p>- Practice grounding techniques to stay in the present.</p>
-            <p>- Journaling can help process emotions.</p>`;
-          break;
-        case 'Anxiety':
-          suggestions = `
-            <h3>Steps to Overcome Anxiety:</h3>
-            <p>- Practice deep breathing exercises.</p>
-            <p>- Limit caffeine and sugar intake.</p>
-            <p>- Meditate daily to calm your mind.</p>
-            <p>- Medicines: Consult for benzodiazepines or SSRIs.</p>`;
-          break;
-        case 'ADHD':
-          suggestions = `
-            <h3>Steps to Manage ADHD:</h3>
-            <p>- Follow a structured routine daily.</p>
-            <p>- Use planners or apps to manage tasks.</p>
-            <p>- Try behavior therapy for improved focus.</p>
-            <p>- Medicines: Consult for stimulants like Adderall or Ritalin.</p>`;
-          break;
-        case 'Stress':
-          suggestions = `
-            <h3>Steps to Manage Stress:</h3>
-            <p>- Identify stressors and address them one by one.</p>
-            <p>- Engage in relaxing hobbies like reading or gardening.</p>
-            <p>- Practice yoga or mindfulness meditation.</p>`;
-          break;
-        default:
-          suggestions = `<p>Invalid selection. Please try again.</p>`;
-      }
-
-      output.innerHTML = suggestions + `<div class="doctor-info">${doctorInfo}</div>`;
+      const data = conditions[condition];
+      output.innerHTML = `<h2>${data.title}</h2>${data.description}`;
       output.style.display = 'block';
       resetBtn.style.display = 'inline-block';
     }
@@ -172,10 +230,7 @@
       const output = document.getElementById('output');
       const resetBtn = document.getElementById('reset-btn');
 
-      // Enable all buttons
       buttons.forEach(button => button.disabled = false);
-
-      // Clear output and hide reset button
       output.style.display = 'none';
       output.innerHTML = '';
       resetBtn.style.display = 'none';
